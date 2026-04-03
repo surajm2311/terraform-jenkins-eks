@@ -38,6 +38,13 @@ module "eks" {
   cluster_version = "1.29"
 
   cluster_endpoint_public_access = true
+  aws_auth_roles = [
+  {
+    rolearn  = "arn:aws:iam::265098672256:role/jenkins-eks-role"
+    username = "jenkins"
+    groups   = ["system:masters"]
+  }
+]
 
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
