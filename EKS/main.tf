@@ -31,6 +31,20 @@ module "vpc" {
 }
 
 module "eks" {
+  access_entries = {
+    jenkins = {
+      principal_arn = "arn:aws:iam::265098672256:role/jenkins-eks-role"
+
+      policy_associations = {
+        admin = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+          access_scope = {
+            type = "cluster"
+          }
+        }
+      }
+    }
+  }
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 20.0"
 
@@ -38,13 +52,6 @@ module "eks" {
   cluster_version = "1.29"
 
   cluster_endpoint_public_access = true
-  aws_auth_roles = [
-  {
-    rolearn  = "arn:aws:iam::265098672256:role/jenkins-eks-role"
-    username = "jenkins"
-    groups   = ["system:masters"]
-  }
-]
 
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
@@ -64,3 +71,4 @@ module "eks" {
     Terraform   = "true"
   }
 }
+
